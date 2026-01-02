@@ -22,7 +22,9 @@ const mockChartData = [
 
 export default function Home() {
   const { user, isAuthenticated, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const themeContext = useTheme();
+  const theme = themeContext?.theme || 'light';
+  const toggleTheme = themeContext?.toggleTheme || (() => {});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -45,6 +47,18 @@ export default function Home() {
     setSearchQuery(e.target.value);
     setShowSearchResults(e.target.value.length > 0);
   };
+
+  // Handle case where theme context is not available
+  if (!themeContext) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg text-muted-foreground mb-4">Loading application...</p>
+          <p className="text-sm text-muted-foreground">Please wait while we initialize the platform.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">

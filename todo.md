@@ -53,3 +53,8 @@
 ## Phase 8: Deployment
 - [ ] Create checkpoint
 - [ ] Prepare deployment documentation
+
+
+## Bug Fixes
+- [x] Fix 404 error on home route with query parameters
+- [x] Fix theme context initialization issue
