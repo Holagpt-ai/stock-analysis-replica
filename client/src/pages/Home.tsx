@@ -210,7 +210,7 @@ export default function Home() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold">{index.value.toLocaleString()}</span>
+                    <span className="text-2xl font-bold">{parseFloat(index.price).toLocaleString()}</span>
                     <Badge variant={parseFloat(index.changePercent) >= 0 ? "default" : "destructive"}>
                       {parseFloat(index.changePercent) >= 0 ? "+" : ""}{index.changePercent}%
                     </Badge>

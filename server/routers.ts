@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
+import { getTopGainers, getTopLosers, getMarketIndices, searchStocks, getStockQuote } from "./fmp";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -19,32 +20,129 @@ export const appRouter = router({
     }),
   }),
 
-  // Stock data endpoints
+  // Stock data endpoints - using FMP API
   stocks: router({
     getTopGainers: publicProcedure
       .input(z.object({ limit: z.number().default(10) }).optional())
-      .query(({ input }) => db.getTopGainers(input?.limit || 10)),
+      .query(async ({ input }) => {
+        try {
+          const gainers = await getTopGainers();
+          return gainers.slice(0, input?.limit || 10).map((stock: any) => ({
+            id: stock.symbol,
+            symbol: stock.symbol,
+            name: stock.symbol,
+            price: stock.price?.toString() || "0",
+            change: stock.change?.toString() || "0",
+            changePercent: stock.changesPercentage?.toString() || "0",
+            volume: stock.volume?.toString() || "0",
+          }));
+        } catch (error) {
+          console.error("Error fetching top gainers:", error);
+          return [];
+        }
+      }),
     
     getTopLosers: publicProcedure
       .input(z.object({ limit: z.number().default(10) }).optional())
-      .query(({ input }) => db.getTopLosers(input?.limit || 10)),
+      .query(async ({ input }) => {
+        try {
+          const losers = await getTopLosers();
+          return losers.slice(0, input?.limit || 10).map((stock: any) => ({
+            id: stock.symbol,
+            symbol: stock.symbol,
+            name: stock.symbol,
+            price: stock.price?.toString() || "0",
+            change: stock.change?.toString() || "0",
+            changePercent: stock.changesPercentage?.toString() || "0",
+            volume: stock.volume?.toString() || "0",
+          }));
+        } catch (error) {
+          console.error("Error fetching top losers:", error);
+          return [];
+        }
+      }),
     
     search: publicProcedure
       .input(z.object({ query: z.string(), limit: z.number().default(20) }))
-      .query(({ input }) => db.searchStocks(input.query, input.limit)),
+      .query(async ({ input }) => {
+        try {
+          const results = await searchStocks(input.query);
+          return results.slice(0, input.limit).map((stock: any) => ({
+            id: stock.symbol,
+            symbol: stock.symbol,
+            name: stock.symbol,
+            price: stock.price?.toString() || "0",
+            change: stock.change?.toString() || "0",
+            changePercent: stock.changesPercentage?.toString() || "0",
+            volume: stock.volume?.toString() || "0",
+          }));
+        } catch (error) {
+          console.error("Error searching stocks:", error);
+          return [];
+        }
+      }),
     
     getBySymbol: publicProcedure
       .input(z.object({ symbol: z.string() }))
-      .query(({ input }) => db.getStockBySymbol(input.symbol)),
+      .query(async ({ input }) => {
+        try {
+          const stock = await getStockQuote(input.symbol);
+          if (!stock) return null;
+          return {
+            id: stock.symbol,
+            symbol: stock.symbol,
+            name: stock.symbol,
+            price: stock.price?.toString() || "0",
+            change: stock.change?.toString() || "0",
+            changePercent: stock.changesPercentage?.toString() || "0",
+            volume: stock.volume?.toString() || "0",
+          };
+        } catch (error) {
+          console.error("Error fetching stock:", error);
+          return null;
+        }
+      }),
   }),
 
-  // Market indices endpoints
+  // Market indices endpoints - using FMP API
   indices: router({
-    getAll: publicProcedure.query(() => db.getIndices()),
+    getAll: publicProcedure.query(async () => {
+      try {
+        const indices = await getMarketIndices();
+        return indices.map((index: any) => ({
+          id: index.symbol,
+          symbol: index.symbol,
+          name: index.name,
+          price: index.price?.toString() || "0",
+          change: index.change?.toString() || "0",
+          changePercent: index.changesPercentage?.toString() || "0",
+        }));
+      } catch (error) {
+        console.error("Error fetching indices:", error);
+        return [];
+      }
+    }),
     
     getBySymbol: publicProcedure
       .input(z.object({ symbol: z.string() }))
-      .query(({ input }) => db.getIndexBySymbol(input.symbol)),
+      .query(async ({ input }) => {
+        try {
+          const indices = await getMarketIndices();
+          const index = indices.find((i: any) => i.symbol === input.symbol);
+          if (!index) return null;
+          return {
+            id: index.symbol,
+            symbol: index.symbol,
+            name: index.name,
+            price: index.price?.toString() || "0",
+            change: index.change?.toString() || "0",
+            changePercent: index.changesPercentage?.toString() || "0",
+          };
+        } catch (error) {
+          console.error("Error fetching index:", error);
+          return null;
+        }
+      }),
   }),
 
   // Watchlist endpoints
