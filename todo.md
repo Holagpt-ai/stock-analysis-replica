@@ -66,3 +66,11 @@
 - [x] Integrate market indices data
 - [x] Update database with real data
 - [x] Test API endpoints
+
+
+## Database Setup
+- [x] Push Drizzle schema to production database
+- [x] Verify all tables created (users, stocks, indices, watchlist, screeners, news, ipos)
+- [x] Test watchlist add functionality
+- [x] Test watchlist remove functionality
+- [x] Verify data persistence
