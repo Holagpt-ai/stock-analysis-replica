@@ -2,22 +2,31 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
+import DashboardLayout from "./components/DashboardLayout";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Watchlist from "./pages/Watchlist";
 import Screener from "./pages/Screener";
 
+function withDashboardLayout(Component: React.ComponentType) {
+  return function Wrapped() {
+    return (
+      <DashboardLayout>
+        <Component />
+      </DashboardLayout>
+    );
+  };
+}
+
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={""} component={Home} />
-      <Route path={"/watchlist"} component={Watchlist} />
-      <Route path={"/screener"} component={Screener} />
+      <Route path={"/"} component={withDashboardLayout(Home)} />
+      <Route path={""} component={withDashboardLayout(Home)} />
+      <Route path={"/watchlist"} component={withDashboardLayout(Watchlist)} />
+      <Route path={"/screener"} component={withDashboardLayout(Screener)} />
       <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );
