@@ -61,6 +61,7 @@ export default function DashboardLayout({
 
   return (
     <SidebarProvider
+      defaultOpen={true}
       style={
         {
           "--sidebar-width": `${sidebarWidth}px`,
@@ -132,7 +133,7 @@ function DashboardLayoutContent({
     <>
       <div className="relative" ref={sidebarRef}>
         <Sidebar
-          collapsible="icon"
+          collapsible={isMobile ? "icon" : "none"}
           className="border-r-0"
           disableTransition={isResizing}
         >
