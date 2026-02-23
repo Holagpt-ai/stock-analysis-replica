@@ -86,11 +86,21 @@ declare global {
   }
 }
 
-const API_KEY = import.meta.env.VITE_FRONTEND_FORGE_API_KEY;
-const FORGE_BASE_URL =
-  import.meta.env.VITE_FRONTEND_FORGE_API_URL ||
-  "https://forge.butterfly-effect.dev";
-const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
+const API_KEY = import.meta.env.VITE_FRONTEND_FORGE_API_KEY ?? "";
+
+/** Production-safe: env override, same-origin fallback, or default Forge URL. */
+function getForgeBaseUrl(): string {
+  const env = import.meta.env.VITE_FRONTEND_FORGE_API_URL;
+  if (typeof env === "string" && env.trim()) {
+    return env.replace(/\/+$/, "");
+  }
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+  return "https://forge.butterfly-effect.dev";
+}
+
+const MAPS_PROXY_URL = `${getForgeBaseUrl()}/v1/maps/proxy`;
 
 function loadMapScript() {
   return new Promise(resolve => {

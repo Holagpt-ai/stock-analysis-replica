@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./env";
+import { safeUrlFromBase } from "./urlUtils";
 
 export type NotificationPayload = {
   title: string;
@@ -14,13 +15,17 @@ const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
 
 const buildEndpointUrl = (baseUrl: string): string => {
-  const normalizedBase = baseUrl.endsWith("/")
-    ? baseUrl
-    : `${baseUrl}/`;
-  return new URL(
+  const url = safeUrlFromBase(
     "webdevtoken.v1.WebDevService/SendNotification",
-    normalizedBase
-  ).toString();
+    baseUrl
+  );
+  if (!url) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Invalid notification service base URL.",
+    });
+  }
+  return url;
 };
 
 const validatePayload = (input: NotificationPayload): NotificationPayload => {

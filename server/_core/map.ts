@@ -8,6 +8,7 @@
  */
 
 import { ENV } from "./env";
+import { safeJoinUrl } from "./urlUtils";
 
 // ============================================================================
 // Configuration
@@ -58,8 +59,12 @@ export async function makeRequest<T = unknown>(
 ): Promise<T> {
   const { baseUrl, apiKey } = getMapsConfig();
 
-  // Construct full URL: baseUrl + /v1/maps/proxy + endpoint
-  const url = new URL(`${baseUrl}/v1/maps/proxy${endpoint}`);
+  const pathSuffix = endpoint.replace(/^\//, "");
+  const urlStr = safeJoinUrl(baseUrl, "v1", "maps", "proxy", pathSuffix);
+  if (!urlStr) {
+    throw new Error("Invalid Google Maps proxy base URL");
+  }
+  const url = new URL(urlStr);
 
   // Add API key as query parameter (standard Google Maps API authentication)
   url.searchParams.append("key", apiKey);

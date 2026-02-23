@@ -37,10 +37,25 @@ queryClient.getMutationCache().subscribe(event => {
   }
 });
 
+/** Production-safe API base: env override or current origin. */
+function getApiBaseUrl(): string {
+  const env = import.meta.env.VITE_API_BASE_URL;
+  if (typeof env === "string" && env.trim()) {
+    return env.replace(/\/+$/, "");
+  }
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+  return "";
+}
+
+const apiBase = getApiBaseUrl();
+const trpcUrl = apiBase ? `${apiBase}/api/trpc` : "/api/trpc";
+
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: "/api/trpc",
+      url: trpcUrl,
       transformer: superjson,
       fetch(input, init) {
         return globalThis.fetch(input, {

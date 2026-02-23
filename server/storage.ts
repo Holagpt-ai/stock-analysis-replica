@@ -2,6 +2,7 @@
 // Uses the Biz-provided storage proxy (Authorization: Bearer <token>)
 
 import { ENV } from './_core/env';
+import { safeUrlFromBase } from './_core/urlUtils';
 
 type StorageConfig = { baseUrl: string; apiKey: string };
 
@@ -19,7 +20,11 @@ function getStorageConfig(): StorageConfig {
 }
 
 function buildUploadUrl(baseUrl: string, relKey: string): URL {
-  const url = new URL("v1/storage/upload", ensureTrailingSlash(baseUrl));
+  const base = safeUrlFromBase("v1/storage/upload", baseUrl);
+  if (!base) {
+    throw new Error("Invalid storage base URL");
+  }
+  const url = new URL(base);
   url.searchParams.set("path", normalizeKey(relKey));
   return url;
 }
@@ -29,20 +34,17 @@ async function buildDownloadUrl(
   relKey: string,
   apiKey: string
 ): Promise<string> {
-  const downloadApiUrl = new URL(
-    "v1/storage/downloadUrl",
-    ensureTrailingSlash(baseUrl)
-  );
+  const base = safeUrlFromBase("v1/storage/downloadUrl", baseUrl);
+  if (!base) {
+    throw new Error("Invalid storage base URL");
+  }
+  const downloadApiUrl = new URL(base);
   downloadApiUrl.searchParams.set("path", normalizeKey(relKey));
   const response = await fetch(downloadApiUrl, {
     method: "GET",
     headers: buildAuthHeaders(apiKey),
   });
   return (await response.json()).url;
-}
-
-function ensureTrailingSlash(value: string): string {
-  return value.endsWith("/") ? value : `${value}/`;
 }
 
 function normalizeKey(relKey: string): string {
