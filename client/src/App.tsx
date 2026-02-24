@@ -5,9 +5,15 @@ import { Route, Switch } from "wouter";
 import DashboardLayout from "./components/DashboardLayout";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import Articles from "./pages/Articles";
+import ETF from "./pages/ETF";
 import Home from "./pages/Home";
-import Watchlist from "./pages/Watchlist";
+import Movers from "./pages/Movers";
+import Newsletter from "./pages/Newsletter";
+import Pro from "./pages/Pro";
 import Screener from "./pages/Screener";
+import Trending from "./pages/Trending";
+import Watchlist from "./pages/Watchlist";
 
 function withDashboardLayout(Component: React.ComponentType) {
   return function Wrapped() {
@@ -26,6 +32,12 @@ function Router() {
       <Route path={""} component={withDashboardLayout(Home)} />
       <Route path={"/watchlist"} component={withDashboardLayout(Watchlist)} />
       <Route path={"/screener"} component={withDashboardLayout(Screener)} />
+      <Route path={"/trending"} component={withDashboardLayout(Trending)} />
+      <Route path={"/movers"} component={withDashboardLayout(Movers)} />
+      <Route path={"/articles"} component={withDashboardLayout(Articles)} />
+      <Route path={"/etf"} component={withDashboardLayout(ETF)} />
+      <Route path={"/newsletter"} component={withDashboardLayout(Newsletter)} />
+      <Route path={"/pro"} component={withDashboardLayout(Pro)} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

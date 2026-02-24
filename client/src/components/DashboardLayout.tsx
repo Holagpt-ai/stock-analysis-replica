@@ -21,7 +21,21 @@ import {
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BarChart3, Home, LogOut, Newspaper, PanelLeft, Rocket, Star } from "lucide-react";
+import {
+  Activity,
+  BarChart3,
+  Crown,
+  FileText,
+  Home,
+  LogOut,
+  Mail,
+  Newspaper,
+  PanelLeft,
+  PieChart,
+  Rocket,
+  Star,
+  TrendingUp,
+} from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -31,8 +45,14 @@ const menuItems = [
   { icon: Home, label: "Home", path: "/" },
   { icon: Star, label: "Watchlist", path: "/watchlist" },
   { icon: BarChart3, label: "Stocks", path: "/screener" },
+  { icon: TrendingUp, label: "Trending", path: "/trending" },
+  { icon: Activity, label: "Movers", path: "/movers" },
+  { icon: FileText, label: "Articles", path: "/articles" },
+  { icon: PieChart, label: "ETF", path: "/etf" },
   { icon: Rocket, label: "IPOs", path: "/#ipos" },
   { icon: Newspaper, label: "News", path: "/#news" },
+  { icon: Mail, label: "Newsletter", path: "/newsletter" },
+  { icon: Crown, label: "Pro", path: "/pro" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
