@@ -73,17 +73,8 @@ export default function Home() {
             <span className="font-bold text-lg hidden sm:inline">Stock Analysis</span>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            <a href="/" className="text-sm font-medium hover:text-primary transition">Home</a>
-            <a href="/screener" className="text-sm font-medium hover:text-primary transition">Stocks</a>
-            <a href="/watchlist" className="text-sm font-medium hover:text-primary transition">Watchlist</a>
-            <a href="/#ipos" className="text-sm font-medium hover:text-primary transition">IPOs</a>
-            <a href="/#news" className="text-sm font-medium hover:text-primary transition">News</a>
-          </div>
-
           {/* Search Bar - Desktop */}
-          <div className="hidden md:flex items-center gap-4 flex-1 max-w-md mx-8">
+          <div className="hidden md:flex items-center justify-center gap-4 flex-1 max-w-md mx-4">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -143,34 +134,27 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Auth only (nav is in sidebar) */}
         {mobileMenuOpen && (
-            <div className="md:hidden border-t border-border bg-card">
-            <div className="container py-4 space-y-3">
-              <a href="/" className="block text-sm font-medium hover:text-primary transition">Home</a>
-              <a href="/screener" className="block text-sm font-medium hover:text-primary transition">Stocks</a>
-              <a href="/watchlist" className="block text-sm font-medium hover:text-primary transition">Watchlist</a>
-              <a href="/#ipos" className="block text-sm font-medium hover:text-primary transition">IPOs</a>
-              <a href="/#news" className="block text-sm font-medium hover:text-primary transition">News</a>
-              <div className="pt-3 border-t border-border space-y-2">
-                {isAuthenticated ? (
-                  <>
-                    <div className="text-sm text-muted-foreground">{user?.name}</div>
-                    <Button variant="outline" size="sm" onClick={logout} className="w-full">
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="outline" size="sm" onClick={() => window.location.href = getLoginUrl()} className="w-full">
-                      Login
-                    </Button>
-                    <Button size="sm" onClick={() => window.location.href = getLoginUrl()} className="w-full">
-                      Sign Up
-                    </Button>
-                  </>
-                )}
-              </div>
+          <div className="md:hidden border-t border-border bg-card">
+            <div className="container py-4 space-y-2">
+              {isAuthenticated ? (
+                <>
+                  <div className="text-sm text-muted-foreground">{user?.name}</div>
+                  <Button variant="outline" size="sm" onClick={logout} className="w-full">
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => window.location.href = getLoginUrl()} className="w-full">
+                    Login
+                  </Button>
+                  <Button size="sm" onClick={() => window.location.href = getLoginUrl()} className="w-full">
+                    Sign Up
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         )}
